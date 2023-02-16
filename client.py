@@ -1,10 +1,10 @@
-import argparse
+﻿import argparse
 import json
+from collections import OrderedDict
 from datetime import datetime
-from tabulate import tabulate
 
 import requests
-from collections import OrderedDict
+from tabulate import tabulate
 
 
 class Sensor:
@@ -54,6 +54,7 @@ class SensorClient:
         r = requests.get(url)
         return Sensor(r.json())
 
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('host', help='The hostname of your RV whisper')
@@ -69,7 +70,7 @@ def main():
     if len(args.sensor) == 0:
         sensors = client.list_sensors()
         if args.json:
-            j = {s.id:s.json for s in sensors}
+            j = {s.id: s.json for s in sensors}
             print(json.dumps(j))
         else:
             for sn in sensors:
@@ -85,7 +86,7 @@ def main():
         elif args.json:
             j = {}
             for s in sensors:
-                j[s.id] = {k.title: [(t.isoformat(), v) for t,v in  k.data.items()] for k in s.series.values()}
+                j[s.id] = {k.title: [(t.isoformat(), v) for t, v in k.data.items()] for k in s.series.values()}
             print(json.dumps(j, indent=2))
         else:
             for s in sensors:
