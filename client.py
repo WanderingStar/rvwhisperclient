@@ -1,6 +1,7 @@
 import argparse
 import json
 from datetime import datetime
+from tabulate import tabulate
 
 import requests
 from collections import OrderedDict
@@ -59,7 +60,7 @@ def main():
     parser.add_argument('sensor', help='The numeric identifier of a sensor', nargs='*', type=int)
     parser.add_argument('-s', '--seconds', help='Number of seconds of history', default=3600, type=int)
     output = parser.add_mutually_exclusive_group()
-    output.add_argument('-u', '--human', action='store_true', help='Output human readable')
+    output.add_argument('-u', '--human', action='store_true', help='Output human readable (Default)')
     output.add_argument('-j', '--json', action='store_true', help='Output JSON')
     output.add_argument('-l', '--last', action='store_true', help='Output only last value')
     args = parser.parse_args()
@@ -86,41 +87,17 @@ def main():
             for s in sensors:
                 j[s.id] = {k.title: [(t.isoformat(), v) for t,v in  k.data.items()] for k in s.series.values()}
             print(json.dumps(j, indent=2))
+        else:
+            for s in sensors:
+                print(f"{s.title}:")
+                data = []
+                headers = ["Timestamp"] + list(s.series.keys())
+                for e in s.series.values():
+                    if data == []:
+                        data = [[t.astimezone().isoformat(" ") for t in e.data.keys()]]
+                    data.append(e.data.values())
+                print(tabulate(zip(*data), headers))
 
 
 if __name__ == '__main__':
     main()
-
-"""
-
-c = SensorClient("192.168.86.99")
-s = c.list_sensors()
-print(s)
-for sn in s:
-    print(sn)
-
-print(c.get_sensor('545').series['DC Voltage (Volts)'])
-
-host = "192.168.86.99"
-base_url = f"http://{host}/sensor"
-
-r = requests.get(f"{base_url}?list=1")
-sensors = r.json().get('sensors');
-
-for sensor in sensors:
-    s = requests.get(f"{base_url}?json=1&sensor_id={sensor}&interval=PT5M")
-    json = s.json()
-    title = json['sensor_title']
-    data = json['data']
-    for key in data:
-        if len(data[key]) == 0:
-            continue
-        if key in ["RSSI (dB)", "Sensor Status", "Seconds Offline",
-                   "Sensor Battery Level (%)", "Sensor Battery Status"]:
-            continue
-        points = [float(r['y']) for r in data[key]]
-        arr = np.array(points)
-        print(f"{title}: {key}")
-        print(f"\tmax: {np.max(arr)}\tmin: {np.min(arr)}\tavg:{np.average(arr)}")
-
-"""
