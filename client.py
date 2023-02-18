@@ -34,6 +34,9 @@ class SensorData:
         for point in data:
             self.data[datetime.fromisoformat(point['x'])] = data_type(point['y'])
 
+    def last(self):
+        return list(self.data.values())[-1]
+
     def __str__(self):
         return f"{self.title}:\n" + "\n".join(f"{k.isoformat()}, {v}" for k, v in self.data.items())
 
@@ -82,7 +85,7 @@ def main():
             for s in sensors:
                 print(f"{s.title}\t{s.id}")
                 for r in s.series.values():
-                    print(f"{r.title}\t{list(r.data.values())[-1]}")
+                    print(f"{r.title}\t{r.last()}")
         elif args.json:
             j = {}
             for s in sensors:
