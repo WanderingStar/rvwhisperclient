@@ -1,9 +1,9 @@
 ﻿import argparse
 import json
+import urllib.request
 from collections import OrderedDict
 from datetime import datetime
 
-import requests
 from tabulate import tabulate
 
 
@@ -48,14 +48,15 @@ class SensorClient:
     def list_sensors(self):
         # This URL should be /api/v1/sensors
         url = f"http://{self.host}/sensor?list=1"
-        r = requests.get(url)
-        return sorted([Sensor(v) for v in r.json().get('sensors').values()], key=lambda x: x.id)
+        with urllib.request.urlopen(url) as u:
+            j = json.loads(u.read().decode('utf-8'))
+            return sorted([Sensor(v) for v in j.get('sensors').values()], key=lambda x: x.id)
 
     def get_sensor(self, id, interval="PT3H"):
         # This URL should be /api/v1/sensor/{id}
         url = f"http://{self.host}/sensor?json=1&sensor_id={id}&interval={interval}"
-        r = requests.get(url)
-        return Sensor(r.json())
+        with urllib.request.urlopen(url) as u:
+            return Sensor(json.loads(u.read().decode('utf-8')))
 
 
 def main():
