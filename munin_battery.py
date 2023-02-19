@@ -1,0 +1,94 @@
+#!/usr/bin/python
+import json
+import os
+import re
+import sys
+import urllib.request
+from collections import OrderedDict
+from datetime import datetime
+
+
+class Sensor:
+    def __init__(self, json):
+        self.json = json
+        self.id = int(json['sensor_id'])
+        self.title = json['sensor_title']
+        if json.get('data') is not None:
+            self.series = {k: SensorData(k, v) for k, v in json['data'].items()}
+        if json.get('alerts') is not None:
+            self.alerts = [a['title'] for a in json['alerts']]
+
+    def __str__(self):
+        return f"{self.id}: {self.title}"
+
+
+class SensorData:
+    _known_types = {
+        'RSSI (dB)': int,
+        'Sensor Status': str,
+    }
+
+    def __init__(self, title, data):
+        self.title = title
+        self.data = OrderedDict()
+        data_type = self._known_types.get(title, float)
+        for point in data:
+            self.data[datetime.fromisoformat(point['x'])] = data_type(point['y'])
+
+    def last(self):
+        return list(self.data.values())[-1]
+
+    def __str__(self):
+        return f"{self.title}:\n" + "\n".join(f"{k.isoformat()}, {v}" for k, v in self.data.items())
+
+
+class SensorClient:
+    def __init__(self, host):
+        self.host = host
+
+    def list_sensors(self):
+        # This URL should be /api/v1/sensors
+        url = f"http://{self.host}/sensor?list=1"
+        with urllib.request.urlopen(url) as u:
+            j = json.loads(u.read().decode('utf-8'))
+            return sorted([Sensor(v) for v in j.get('sensors').values()], key=lambda x: x.id)
+
+    def get_sensor(self, id, interval="PT3H"):
+        # This URL should be /api/v1/sensor/{id}
+        url = f"http://{self.host}/sensor?json=1&sensor_id={id}&interval={interval}"
+        with urllib.request.urlopen(url) as u:
+            return Sensor(json.loads(u.read().decode('utf-8')))
+
+
+def flatten(s):
+    return re.sub("\\W+", "", s.lower())
+
+
+host = os.environ.get('HOST')
+excluded = ("Sensor Status", "RSSI (dB)", "Seconds Offline", "Sensor Battery Level (%)")
+if "EXCLUDED" in os.environ:
+    excluded = os.environ.get('EXCLUDED').split(",")
+client = SensorClient(host)
+id = sys.argv[0].split("_", 1)[-1]
+sensors = client.list_sensors()
+
+if 'config' in sys.argv:
+    print(f"graph_title Sensor Batteries")
+    print("graph_category sensors")
+    for sn in sensors:
+        sensor = client.get_sensor(sn.id, "PT300S")
+        flat = flatten(sn.title) + "_battery"
+        for s in sensor.series.values():
+            if "Sensor Battery" not in s.title:
+                continue
+            print(f"{flat}.label {sn.title} {s.title}")
+            print(f"{flat}.min 0")
+            print(f"{flat}.max 100")
+else:
+    for sn in sensors:
+        sensor = client.get_sensor(sn.id, "PT300S")
+        flat = flatten(sn.title) + "_battery"
+        for s in sensor.series.values():
+            if "Sensor Battery" not in s.title:
+                continue
+            print(f"{flat}.value {s.last()}")
