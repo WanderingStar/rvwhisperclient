@@ -1,4 +1,6 @@
-﻿import argparse
+#!/usr/bin/env python3
+
+import argparse
 import json
 import urllib.request
 from collections import OrderedDict
@@ -61,7 +63,7 @@ class SensorClient:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('host', help='The hostname of your RV whisper')
+    parser.add_argument('host', help='The hostname or IP address of your RV Whisper')
     parser.add_argument('sensor', help='The numeric identifier of a sensor', nargs='*', type=int)
     parser.add_argument('-s', '--seconds', help='Number of seconds of history', default=3600, type=int)
     output = parser.add_mutually_exclusive_group()
