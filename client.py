@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+# This is a command line client for a possible future RV Whisper API
+# You can also treat it as a library and import SensorClient for use in other code
+# see https://github.com/WanderingStar/rvwhisperclient for details
+# Copyright (c) 2023 Aneel Nazareth
+
 import argparse
 import json
 import urllib.request
