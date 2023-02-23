@@ -69,8 +69,11 @@ of sensors that have a data series with the same title.
 
 I decided to not package the SensorClient as a library, so that these could
 be just dropped in your munin directory (`/usr/share/munin/plugins` on my
-system). You can set up graphs for individual
-sensors by symlinking a plugin with the sensor ID:
+system).
+
+### Single Sensor Graphs
+
+You can set up graphs for individual sensors by symlinking a plugin with the sensor ID:
 
 ```commandline
 > ls -l /etc/munin/plugins
@@ -84,7 +87,9 @@ lrwxrwxrwx 1 root root 34 Feb 18 20:04 rvwhisper_785 -> /usr/share/munin/plugins
 
 ![Outside](outside-day.png "Outside Temperature Graph. I should probably not leave my temperature sensor where it gets direct sun...")
 
-Or set up combined graphs by linking a "flattened" (lower case, just letters)
+### Multi-sensor Graphs
+
+Set up combined graphs by linking a "flattened" (lower case, just ASCII letters)
 string to look for in the title:
 ```commandline
 > ls -l /etc/munin/plugins
@@ -100,6 +105,7 @@ my temperature sensors and "Sensor Battery Status" from my propane sensor.
 
 ![Temperature](temperature-day.png "Multi-line Temperature Graph")
 
+### Configuration
 
 To configure, add at least your host to `/etc/munin/plugin-conf.d/munin-node`:
 ```
