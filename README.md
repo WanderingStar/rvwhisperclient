@@ -73,6 +73,8 @@ system).
 
 ### Single Sensor Graphs
 
+![Outside](outside-day.png "Outside Temperature Graph. I should probably not leave my temperature sensor where it gets direct sun...")
+
 You can set up graphs for individual sensors by symlinking a plugin with the sensor ID:
 
 ```commandline
@@ -85,9 +87,9 @@ lrwxrwxrwx 1 root root 34 Feb 18 20:04 rvwhisper_545 -> /usr/share/munin/plugins
 lrwxrwxrwx 1 root root 34 Feb 18 20:04 rvwhisper_785 -> /usr/share/munin/plugins/rvwhisper_sensor
 ```
 
-![Outside](outside-day.png "Outside Temperature Graph. I should probably not leave my temperature sensor where it gets direct sun...")
-
 ### Multi-sensor Graphs
+
+![Temperature](temperature-day.png "Multi-line Temperature Graph")
 
 Set up combined graphs by linking a "flattened" (lower case, just ASCII letters)
 string to look for in the title:
@@ -102,8 +104,6 @@ The first one gets all of the "Degrees F" data from my temperature sensors
 by looking for the string "degrees". The second gets all of the
 "Relative Humidity (%)" data. The third gets "Sensor Battery Level (%)" from
 my temperature sensors and "Sensor Battery Status" from my propane sensor.
-
-![Temperature](temperature-day.png "Multi-line Temperature Graph")
 
 ### Configuration
 
