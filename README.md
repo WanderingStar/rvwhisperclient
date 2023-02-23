@@ -83,7 +83,7 @@ lrwxrwxrwx 1 root root 34 Feb 18 20:04 rvwhisper_785 -> /usr/share/munin/plugins
 ```
 
 ![Outside Temperature Graph. I should probably not leave my temperature sensor where it gets direct sun...
-](outside-day.png "Outside")
+](outside-day.png)
 
 Or set up combined graphs by linking a "flattened" (lower case, just letters)
 string to look for in the title:
@@ -99,7 +99,7 @@ by looking for the string "degrees". The second gets all of the
 "Relative Humidity (%)" data. The third gets "Sensor Battery Level (%)" from
 my temperature sensors and "Sensor Battery Status" from my propane sensor.
 
-![Temperature Graph](temperature-day.png "Temperature")
+![Temperature Graph](temperature-day.png)
 
 
 To configure, add at least your host to `/etc/munin/plugin-conf.d/munin-node`:
@@ -118,4 +118,4 @@ These settings are useful for values that vary over a small range, like battery 
 env.GRAPH_ARGS --alt-autoscale --alt-y-grid
 ```
 
-![Battery Voltage Graph](battery-day.png "Battery")
+![Battery Voltage Graph](battery-day.png)
