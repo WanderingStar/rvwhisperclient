@@ -82,6 +82,9 @@ lrwxrwxrwx 1 root root 34 Feb 18 20:04 rvwhisper_545 -> /usr/share/munin/plugins
 lrwxrwxrwx 1 root root 34 Feb 18 20:04 rvwhisper_785 -> /usr/share/munin/plugins/rvwhisper_sensor
 ```
 
+![Outside Temperature Graph. I should probably not leave my temperature sensor where it gets direct sun...
+](outside-day.png "Outside")
+
 Or set up combined graphs by linking a "flattened" (lower case, just letters)
 string to look for in the title:
 ```commandline
@@ -96,12 +99,23 @@ by looking for the string "degrees". The second gets all of the
 "Relative Humidity (%)" data. The third gets "Sensor Battery Level (%)" from
 my temperature sensors and "Sensor Battery Status" from my propane sensor.
 
+![Temperature Graph](temperature-day.png "Temperature")
+
+
 To configure, add at least your host to `/etc/munin/plugin-conf.d/munin-node`:
 ```
 [rvwhisper_*]
 env.HOST 192.168.86.99
 env.EXCLUDED Error Code,Sensor Status,RSSI (dB),Seconds Offline,Sensor Battery Level (%)
 ```
-EXCLUDED is a comma-separated list of data to not show in graphs. If a data
+EXCLUDED is a comma-separated list of data series to not show in graphs. If a data
 series has a title listed here, it will not be shown on an `rvwhisper_sensor`
 graph.
+
+GRAPH_ARGS passes the value to [rrdgraph](https://oss.oetiker.ch/rrdtool/doc/rrdgraph.en.html).
+These settings are useful for values that vary over a small range, like battery voltages:
+```commandline
+env.GRAPH_ARGS --alt-autoscale --alt-y-grid
+```
+
+![Battery Voltage Graph](battery-day.png "Battery")

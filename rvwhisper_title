@@ -77,6 +77,8 @@ sensors = client.list_sensors()
 
 if 'config' in sys.argv:
     printed_title = False
+    if "GRAPH_ARGS" in os.environ:
+        print("graph_args " + os.environ["GRAPH_ARGS"])
     print("graph_category sensors")
     for sn in sensors:
         sensor = client.get_sensor(sn.id, "PT300S")

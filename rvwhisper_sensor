@@ -81,8 +81,8 @@ sensor = client.get_sensor(id, "PT300S")
 if 'config' in sys.argv:
     print(f"graph_title {sensor.title}")
     print("graph_category sensors")
-    if "SCALE" in os.environ:
-        print(f"graph_args --alt-autoscale")
+    if "GRAPH_ARGS" in os.environ:
+        print("graph_args " + os.environ["GRAPH_ARGS"])
     for s in sensor.series.values():
         flat = flatten(s.title)
         print(f"{flat}.label {s.title}")
