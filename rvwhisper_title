@@ -88,8 +88,6 @@ if 'config' in sys.argv:
                 print(f"graph_title {s.title}")
                 printed_title = True
             print(f"{flat}.label {sn.title} {s.title}")
-            print(f"{flat}.min 0")
-            print(f"{flat}.max 100")
 else:
     for sn in sensors:
         sensor = client.get_sensor(sn.id, "PT300S")

@@ -81,14 +81,13 @@ sensor = client.get_sensor(id, "PT300S")
 if 'config' in sys.argv:
     print(f"graph_title {sensor.title}")
     print("graph_category sensors")
+    if "SCALE" in os.environ:
+        print(f"graph_args --alt-autoscale")
     for s in sensor.series.values():
         flat = flatten(s.title)
         print(f"{flat}.label {s.title}")
         if s.title in excluded:
             print(f"{flat}.graph no")
-        if "%" in s.title:
-            print(f"{flat}.min 0")
-            print(f"{flat}.max 100")
 else:
     for s in sensor.series.values():
         if s.title in excluded:
